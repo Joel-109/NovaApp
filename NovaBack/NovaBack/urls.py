@@ -22,7 +22,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 #from usuarios.views import UsuarioViewSet
 #from transacciones.views import CategoriaGastoViewSet, TransaccionViewSet
-from metas.views import MetaViewSet
+#from metas.views import MetaViewSet
 #from notificaciones.views import NotificacionViewSet, ConfiguracionNotificacionViewSet
 
 router = DefaultRouter()
