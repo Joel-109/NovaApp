@@ -24,18 +24,15 @@ class UsuarioSerializer(serializers.ModelSerializer):
 class UsuarioCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = [
-            'username',
-            'password', 
-            'email',
-            'first_name',
-            'last_name',
-            'telefono',
-            'presupuesto_mensual'
-        ]
+        fields = ["username", "password", "email", "telefono"]
+
         extra_kwargs = {
-            'password': {'write_only': True}
+            "password": {"write_only": True},
         }
-    
+
     def create(self, validated_data):
-        return Usuario.objects.create_user(**validated_data)
+        password = validated_data.pop("password")
+        user = Usuario(**validated_data)
+        user.set_password(password)      # ← ENCRIPTA
+        user.save()
+        return user
