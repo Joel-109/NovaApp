@@ -26,7 +26,6 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 #from notificaciones.views import NotificacionViewSet, ConfiguracionNotificacionViewSet
 
 router = DefaultRouter()
-#router.register(r'usuarios', UsuarioViewSet)
 #router.register(r'categorias', CategoriaGastoViewSet, basename='categoria')
 #router.register(r'transacciones', TransaccionViewSet, basename='transaccion')
 #router.register(r'metas', MetaViewSet, basename='meta')
@@ -35,7 +34,7 @@ router = DefaultRouter()
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
+    path('api/', include("usuarios.urls")),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
