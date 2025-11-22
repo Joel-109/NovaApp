@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'metas',
     'usuarios',
     'transacciones'
+    'notificaciones',
 ]
 
 MIDDLEWARE = [
