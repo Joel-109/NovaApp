@@ -25,6 +25,7 @@ class Meta(models.Model):
     meta_monto = models.DecimalField(
         max_digits=12,
         decimal_places=2,
+        
         validators=[MinValueValidator(0)]
     )
     ahorro_actual = models.DecimalField(
@@ -77,6 +78,10 @@ class Meta(models.Model):
         if self.ahorro_actual >= self.meta_monto:
             self.completada = True
         self.save()
+
+    def save(self, *args, **kwargs):
+        self.full_clean() 
+        super().save(*args, **kwargs)
 
 
 class AporteMeta(models.Model):
