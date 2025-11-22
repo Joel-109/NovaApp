@@ -1,8 +1,8 @@
 # metas/models.py
 from django.db import models
-from django.conf import settings
+from usuarios.models import Usuario
 from django.core.validators import MinValueValidator
-
+''''''
 class Meta(models.Model):
     """Modelo para metas de ahorro"""
     
@@ -17,7 +17,7 @@ class Meta(models.Model):
     
 
     usuario = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        Usuario,
         on_delete=models.CASCADE,
         related_name='metas'
     )
