@@ -1,0 +1,37 @@
+name: Run Tests and Generate Allure Report
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+    branches: ["main", "master"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          pip install -r NovaBack/requirements.txt
+          pip install pytest pytest-django allure-pytest
+
+      - name: Run tests with Allure
+        run: pytest tests/ --alluredir=tests/results
+
+      - name: Generate Allure report
+        run: allure generate tests/results -o tests/reports
+
+      - name: Upload Allure report as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: tests/reports
