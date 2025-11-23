@@ -25,13 +25,14 @@ SECRET_KEY = 'django-insecure-+1rlrenz8vkwg@n=sk@02%)vbhoez++&4m(f6&u3hvh-x#!exv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 AUTH_USER_MODEL = 'usuarios.Usuario'
 
 # Application definition
 
 INSTALLED_APPS = [
+    'django_prometheus',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
