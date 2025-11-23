@@ -1,4 +1,4 @@
-name: Run Django Tests and Allure Reports
+name: Django Tests with Allure Reports
 
 on:
   push:
@@ -24,27 +24,34 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-django allure-pytest coverage
 
+      - name: Set Django settings
+        run: |
+          echo "DJANGO_SETTINGS_MODULE=NovaBack.settings" >> $GITHUB_ENV
+
       - name: Run Django tests with coverage
         run: |
-          export DJANGO_SETTINGS_MODULE=NovaBack.settings
           coverage run manage.py test
           coverage xml -o tests/results/coverage.xml
 
-      - name: Download and unzip Allure
+      - name: Download latest Allure CLI
         run: |
-          mkdir -p allure
-          wget -O allure.zip https://github.com/allure-framework/allure2/releases/download/2.35.1/allure-2.35.1.zip
-          unzip allure.zip -d allure
-          export PATH=$PATH:$(pwd)/allure/allure-2.35.1/bin
-          allure --version  # Verifica que se instaló correctamente
+          # Obtener la última versión
+          LATEST=$(curl -s https://api.github.com/repos/allure-framework/allure2/releases/latest | grep '"tag_name":' | sed -E 's/.*"v?([^"]+)".*/\1/')
+          echo "Latest Allure version: $LATEST"
+          # Descargar y descomprimir
+          wget -O allure.zip https://github.com/allure-framework/allure2/releases/download/$LATEST/allure-$LATEST.zip
+          unzip -q allure.zip -d allure
+          # Agregar binario a PATH
+          echo "$PWD/allure/allure-$LATEST/bin" >> $GITHUB_PATH
+
+      - name: Verify Allure installation
+        run: |
+          allure --version
 
       - name: Run pytest with Allure
         run: |
-          export DJANGO_SETTINGS_MODULE=NovaBack.settings
-          export PATH=$PATH:$(pwd)/allure/allure-2.35.1/bin
           pytest NovaBack --alluredir=tests/results/allure_raw
 
       - name: Generate Allure Report
         run: |
-          export PATH=$PATH:$(pwd)/allure/allure-2.35.1/bin
           allure generate tests/results/allure_raw --clean -o tests/results/allure
