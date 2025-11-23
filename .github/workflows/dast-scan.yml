@@ -15,20 +15,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Levantar el backend (tu imagen Docker ya construida)
-      - name: Build and start backend container
+      # 2️⃣ Levantar el backend
+      - name: Start backend container
         run: |
           docker build -t nova_backend -f NovaBack/Dockerfile NovaBack/
           docker run -d --name nova_backend -p 8000:8000 nova_backend
-          sleep 10  # Esperar a que el backend esté listo
+          sleep 10
 
-      # 3️⃣ Crear directorio para reporte y dar permisos
-      - name: Prepare ZAP report directory
-        run: |
-          mkdir -p ${{ github.workspace }}/zap_report
-          chmod 777 ${{ github.workspace }}/zap_report
+      # 3️⃣ Crear carpeta para reportes
+      - name: Prepare ZAP report folder
+        run: mkdir -p ${{ github.workspace }}/zap_report
 
-      # 4️⃣ Ejecutar ZAP Baseline Scan
+      # 4️⃣ Ejecutar ZAP Baseline Scan (modo puro, genera HTML)
       - name: Run OWASP ZAP Baseline Scan
         run: |
           docker run --rm --network="host" \
@@ -36,7 +34,7 @@ jobs:
             ghcr.io/zaproxy/zaproxy:stable \
             /zap/zap-baseline.py -t http://localhost:8000/api/ -r /zap/wrk/zap_report.html -I
 
-      # 5️⃣ Listar archivos generados para debug
+      # 5️⃣ Listar archivos para verificar
       - name: List ZAP report files
         run: ls -la ${{ github.workspace }}/zap_report
 
