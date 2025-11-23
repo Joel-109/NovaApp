@@ -16,13 +16,13 @@ jobs:
         uses: actions/checkout@v4
 
       # 2️⃣ Levantar el backend (tu imagen Docker ya construida)
-      - name: Start backend container
+      - name: Build and start backend container
         run: |
           docker build -t nova_backend -f NovaBack/Dockerfile NovaBack/
           docker run -d --name nova_backend -p 8000:8000 nova_backend
           sleep 10  # Esperar a que el backend esté listo
 
-      # 3️⃣ Crear directorio para el reporte con permisos
+      # 3️⃣ Crear directorio para reporte y dar permisos
       - name: Prepare ZAP report directory
         run: |
           mkdir -p ${{ github.workspace }}/zap_report
@@ -36,11 +36,11 @@ jobs:
             ghcr.io/zaproxy/zaproxy:stable \
             /zap/zap-baseline.py -t http://localhost:8000/api/ -r /zap/wrk/zap_report.html -I
 
-      # 5️⃣ Listar archivos para debug
-      - name: List files in zap_report
+      # 5️⃣ Listar archivos generados para debug
+      - name: List ZAP report files
         run: ls -la ${{ github.workspace }}/zap_report
 
-      # 6️⃣ Guardar reporte como artefacto
+      # 6️⃣ Subir reporte como artefacto
       - name: Upload ZAP report
         uses: actions/upload-artifact@v4
         with:
