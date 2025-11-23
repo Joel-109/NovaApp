@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Descargar el repositorio
+      # 1️⃣ Descargar el repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -21,49 +21,40 @@ jobs:
         with:
           python-version: "3.13"
 
-      # 3️⃣ Instalar dependencias + coverage + allure-pytest
+      # 3️⃣ Instalar dependencias + coverage + pytest + pytest-django + allure-pytest
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r NovaBack/requirements.txt
-          pip install coverage allure-pytest
+          pip install coverage pytest pytest-django allure-pytest
 
-      # 4️⃣ Migraciones Django
+      # 4️⃣ Ejecutar migraciones Django
       - name: Run migrations
         working-directory: ./NovaBack
-        run: |
-          python manage.py migrate
+        run: python manage.py migrate
 
-      # 5️⃣ Instalar Allure CLI
-      - name: Install Allure CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jre-headless wget unzip
-          ALLURE_VERSION=2.35.0
-          wget https://github.com/allure-framework/allure2/releases/download/$ALLURE_VERSION/allure-$ALLURE_VERSION.tgz
-          tar -zxvf allure-$ALLURE_VERSION.tgz -C $HOME/
-          echo "$HOME/allure-$ALLURE_VERSION/bin" >> $GITHUB_PATH
-
-      # 6️⃣ Ejecutar tests con coverage y generar reporte XML
-      - name: Run Django tests
+      # 5️⃣ Ejecutar tests con pytest-django y generar reporte Allure
+      - name: Run Django tests with Allure
         working-directory: ./NovaBack
         run: |
-          coverage run manage.py test
-          coverage xml -o tests/results/coverage.xml
-          pytest --alluredir=tests/results/allure_raw
+          mkdir -p tests/results/allure_raw
+          pytest --ds=NovaBack.settings --alluredir=tests/results/allure_raw
 
-      # 7️⃣ Generar reporte Allure
+      # 6️⃣ Generar reporte Allure (requiere que allure esté instalado en el runner)
       - name: Generate Allure Report
         run: |
-          mkdir -p tests/results/allure
-          allure generate tests/results/allure_raw --clean -o tests/results/allure
+          sudo apt-get update
+          sudo apt-get install -y openjdk-11-jre-headless unzip wget
+          wget https://github.com/allure-framework/allure2/releases/latest/download/allure-2.27.5.zip -O allure.zip
+          unzip allure.zip -d allure
+          allure/bin/allure generate NovaBack/tests/results/allure_raw --clean -o NovaBack/tests/results/allure
 
-      # 8️⃣ Subir reportes como artifacts
+      # 7️⃣ Subir reportes como artifact
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: NovaBack/tests/results/coverage.xml
+          path: NovaBack/coverage.xml
 
       - name: Upload Allure Report
         uses: actions/upload-artifact@v4
