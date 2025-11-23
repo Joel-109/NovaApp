@@ -22,26 +22,29 @@ jobs:
           docker run -d --name nova_backend -p 8000:8000 nova_backend
           sleep 10  # Esperar a que el backend esté listo
 
-      # 3️⃣ Ejecutar ZAP Baseline Scan
+      # 3️⃣ Preparar directorio de reportes con permisos
+      - name: Prepare report directory
+        run: |
+          mkdir -p ${{ github.workspace }}/zap_report
+          chmod -R 777 ${{ github.workspace }}/zap_report
+
+      # 4️⃣ Ejecutar ZAP Baseline Scan
       - name: Run OWASP ZAP Baseline Scan
         run: |
           docker run --rm --network="host" \
-            -v ${{ github.workspace }}:/zap/wrk \
+            -v ${{ github.workspace }}/zap_report:/zap/wrk \
             ghcr.io/zaproxy/zaproxy:stable \
             /zap/zap-baseline.py -t http://localhost:8000/api/ -r /zap/wrk/zap_report.html -I
-          ls -la /zap/wrk
+          ls -la ${{ github.workspace }}/zap_report
 
-      - name: List all files recursively in workspace
-        run: ls -laR ${{ github.workspace }}
-      
-      # 4️⃣ Guardar reporte como artefacto
+      # 5️⃣ Subir reporte como artefacto
       - name: Upload ZAP report
         uses: actions/upload-artifact@v4
         with:
           name: zap-report
-          path: zap_report.html
+          path: zap_report/zap_report.html
 
-      # 5️⃣ Detener el backend
+      # 6️⃣ Detener el backend
       - name: Stop backend container
         if: always()
         run: docker stop nova_backend && docker rm nova_backend
