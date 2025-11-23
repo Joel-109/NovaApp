@@ -28,7 +28,7 @@ jobs:
           docker run --rm --network="host" \
             -v ${{ github.workspace }}:/zap/wrk \
             ghcr.io/zaproxy/zaproxy:stable \
-            /zap/zap-baseline.py -t http://localhost:8000 -r zap_report.html
+            /zap/zap-baseline.py -t http://localhost:8000/api/ -r /zap/wrk/zap_report.html -I
 
 
       # 4️⃣ Guardar reporte como artefacto
