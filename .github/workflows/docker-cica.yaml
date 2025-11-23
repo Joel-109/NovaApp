@@ -1,10 +1,10 @@
 name: Docker Build and Compose Test
 
 on:
-  push:
-    branches: ["main", "master"]
+  push:        # Ejecuta en cada commit
+    branches: ["**"]   # Todas las ramas
   pull_request:
-    branches: ["main", "master"]
+    branches: ["**"]
 
 jobs:
   docker-test:
