@@ -28,7 +28,7 @@ jobs:
           pip install -r NovaBack/requirements.txt
           pip install coverage allure-pytest
 
-      # 4️⃣ Ejecutar migraciones de Django
+      # 4️⃣ Migraciones Django
       - name: Run migrations
         working-directory: ./NovaBack
         run: |
@@ -41,13 +41,22 @@ jobs:
           coverage run manage.py test
           coverage xml -o tests/results/coverage.xml
 
-      # 6️⃣ Generar reporte Allure (requiere allure instalado en runner)
+      # 6️⃣ Instalar Allure CLI
+      - name: Install Allure CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-11-jre
+          wget https://github.com/allure-framework/allure2/releases/download/2.27.5/allure-2.27.5.tgz
+          tar -zxvf allure-2.27.5.tgz -C $HOME/
+          echo "$HOME/allure-2.27.5/bin" >> $GITHUB_PATH
+
+      # 7️⃣ Generar reporte Allure
       - name: Generate Allure Report
         run: |
           mkdir -p tests/results/allure
           allure generate tests/results --clean -o tests/results/allure
 
-      # 7️⃣ Subir reportes como artifacts
+      # 8️⃣ Subir reportes como artifact
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
