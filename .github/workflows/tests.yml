@@ -35,14 +35,14 @@ jobs:
           python manage.py migrate
 
       # 5️⃣ Instalar Allure CLI
-      - name: Install Allure Commandline
+      - name: Install Allure CLI
         run: |
           sudo apt-get update
           sudo apt-get install -y openjdk-11-jre-headless wget unzip
-          wget https://github.com/allure-framework/allure2/releases/download/2.27.5/allure-2.27.5.zip
-          unzip allure-2.27.5.zip -d /tmp/
-          sudo mv /tmp/allure-2.27.5 /opt/allure
-          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+          ALLURE_VERSION=2.35.0
+          wget https://github.com/allure-framework/allure2/releases/download/$ALLURE_VERSION/allure-$ALLURE_VERSION.tgz
+          tar -zxvf allure-$ALLURE_VERSION.tgz -C $HOME/
+          echo "$HOME/allure-$ALLURE_VERSION/bin" >> $GITHUB_PATH
 
       # 6️⃣ Ejecutar tests con coverage y generar reporte XML
       - name: Run Django tests
