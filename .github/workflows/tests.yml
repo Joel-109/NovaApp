@@ -34,30 +34,23 @@ jobs:
         run: |
           python manage.py migrate
 
-      # 5️⃣ Ejecutar tests con coverage y generar reporte XML
-      - name: Run Django tests
+      # 5️⃣ Ejecutar tests con pytest + Allure
+      - name: Run Django tests with Allure
         working-directory: ./NovaBack
         run: |
+          mkdir -p tests/results/allure_raw
+          pytest . --alluredir=tests/results/allure_raw
           coverage run manage.py test
           coverage xml -o tests/results/coverage.xml
 
-      # 6️⃣ Instalar Allure CLI (última versión automáticamente)
-      - name: Install Allure CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jre-headless wget tar
-          ALLURE_VERSION=$(curl -s https://api.github.com/repos/allure-framework/allure2/releases/latest | grep tag_name | cut -d '"' -f 4)
-          wget https://github.com/allure-framework/allure2/releases/download/$ALLURE_VERSION/allure-$ALLURE_VERSION.tgz
-          tar -zxvf allure-$ALLURE_VERSION.tgz -C $HOME/
-          echo "$HOME/allure-$ALLURE_VERSION/bin" >> $GITHUB_PATH
-
-      # 7️⃣ Generar reporte Allure
+      # 6️⃣ Generar reporte Allure
       - name: Generate Allure Report
+        working-directory: ./NovaBack
         run: |
           mkdir -p tests/results/allure
-          allure generate tests/results --clean -o tests/results/allure
+          allure generate tests/results/allure_raw -o tests/results/allure --clean
 
-      # 8️⃣ Subir reportes como artifact
+      # 7️⃣ Subir artifacts
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
