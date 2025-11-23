@@ -1,16 +1,16 @@
 FROM python:3.13-slim
 
-# Crear carpeta de la app
+# Crear carpeta de trabajo
 WORKDIR /app
 
 # Copiar requirements e instalar dependencias
-COPY /NovaBack/requirements.txt .
+COPY NovaBack/requirements.txt .
 
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r /NovaBack/requirements.txt
+    pip install --no-cache-dir -r requirements.txt
 
 # Copiar el resto del proyecto
-COPY . .
+COPY NovaBack/ .
 
 # Exponer puerto
 EXPOSE 8000
