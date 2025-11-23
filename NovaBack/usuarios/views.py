@@ -1,14 +1,17 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework.views import APIView
+from rest_framework import  permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from usuarios.models import Usuario
-from .serializers import (
-    UsuarioSerializer, 
-    UsuarioCreateSerializer, 
-    UsuarioConMetasSerializer, 
-    UsuarioConTransaccionesSerializer
-)
+from .serializers import UsuarioSerializer,UsuarioCreateSerializer
+
+'''
+class UsuarioViewSet(viewsets.ModelViewSet):
+    queryset = Usuario.objects.all()
+    permission_classes = [permissions.AllowAny]
+
+'''
 
 # Create your views here.
 class UsuarioAPIView(APIView):
@@ -21,9 +24,10 @@ class UsuarioAPIView(APIView):
         return Response(serializer.errors)
 
 class UsuarioCreateAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
 
     def get(self, request):
-        usuarios = Usuario.objects.all()   # ✔ Aquí va el MODELO
+        usuarios = Usuario.objects.all()   
         serializer = UsuarioCreateSerializer(usuarios, many=True)
         return Response(serializer.data)
 

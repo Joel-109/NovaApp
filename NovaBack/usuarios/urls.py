@@ -4,5 +4,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path("usuarios/", UsuarioAPIView.as_view()),
-    path("usuarios/crear", UsuarioCreateAPIView.as_view()),
+    path("usuarios/create/", UsuarioCreateAPIView.as_view()),
 ]
