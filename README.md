@@ -23,6 +23,8 @@ ya instalado el expo go procedemos a poner el siguiente comando
 npx expo start -c
 ``` 
 esto nos generara dos cosas para entrar, entonces en nuestro dispositivo descargamos Expo Go y escaneamos el código que nos aparece en la consola o ponemos el url que sale abajo del código que se genero.
+
+
 Metro waiting on exp://ip:puerto
 
 
