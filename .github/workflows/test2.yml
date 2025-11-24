@@ -17,8 +17,17 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+<<<<<<< HEAD
+=======
+      - name: Login to Docker Hub (optional)
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+>>>>>>> 72b51c0b77510912f5569995a037e31f3faf9f5a
       - name: Build Docker image
-        run: docker build -t myapp-image .
+        run: docker build -t myapp-image -f NovaBack/Dockerfile NovaBack/
 
       - name: Run docker compose
         run: |

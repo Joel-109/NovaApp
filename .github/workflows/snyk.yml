@@ -1,0 +1,32 @@
+name: Snyk Dependency Scan
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+    branches: ["main", "master"]
+
+jobs:
+  snyk-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Descargar el repositorio
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Instalar Snyk en el runner
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
+      # 3️⃣ Ejecutar Snyk test usando requirements.txt
+      - name: Run Snyk test
+        run: snyk test --file=NovaBack/requirements.txt --package-manager=pip --skip-unresolved
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      # 4️⃣ Opcional: Monitorear para alertas futuras
+      - name: Snyk monitor
+        run: snyk monitor --file=NovaBack/requirements.txt --package-manager=pip --skip-unresolved
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
