@@ -7,3 +7,8 @@
 * El backend es todo el contenido que esta como tal en el repositorio.
 
 ## Integrantes:Julian Andres Pedraza, Joel Felipe Alba , Camilo Andres Otalora
+
+Para ejecutar el backend, correr el siguiente código en consola:
+```
+docker compose up --build
+```
